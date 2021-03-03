@@ -32,9 +32,16 @@ public class HomesManager {
         List<Home> homes = new ArrayList<>();
 
         try {
-            String query = "CREATE TABLE IF NOT EXISTS homes (id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY, homename VARCHAR(255) NOT NULL, owner VARCHAR(255) NOT NULL, x FLOAT(25) NOT NULL, y "
-                    + "FLOAT(25) NOT NULL, z FLOAT(25) NOT NULL, yaw FLOAT(10) NOT NULL, pitch FLOAT(10) NOT NULL, world VARCHAR(255) NOT NULL)";
-            this.sql.prepareStatement(query).executeUpdate();
+            boolean mysql = CloudyHomes.getInstance().getPluginConfig().getConfig().getBoolean("mysql.enabled");
+            if (mysql) {
+                String query = "CREATE TABLE IF NOT EXISTS homes (id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY, homename VARCHAR(255) NOT NULL, owner VARCHAR(255) NOT NULL, x FLOAT(25) NOT NULL, y "
+                        + "FLOAT(25) NOT NULL, z FLOAT(25) NOT NULL, yaw FLOAT(10) NOT NULL, pitch FLOAT(10) NOT NULL, world VARCHAR(255) NOT NULL)";
+                this.sql.prepareStatement(query).executeUpdate();
+            } else {
+                String query = "CREATE TABLE IF NOT EXISTS homes (id INTEGER PRIMARY KEY AUTOINCREMENT, homename TEXT(255) NOT NULL, owner TEXT(255) NOT NULL, " +
+                        "x REAL(25) NOT NULL, y REAL(25) NOT NULL, z REAL(25) NOT NULL, yaw REAL(10) NOT NULL, pitch REAL(10) NOT NULL, world TEXT(255) NOT NULL)";
+                this.sql.prepareStatement(query).executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
