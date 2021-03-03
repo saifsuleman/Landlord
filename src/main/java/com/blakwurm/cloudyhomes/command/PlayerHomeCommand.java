@@ -9,11 +9,13 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerHomeCommand implements CommandExecutor {
+public class PlayerHomeCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!PermissionHandler.hasPermission(sender, PermissionHandler.HOME_ADMIN)) return true;
@@ -50,4 +52,17 @@ public class PlayerHomeCommand implements CommandExecutor {
     }
 
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length == 1) {
+            return null;
+        }
+        if (args.length == 2) {
+            OfflinePlayer offlinePlayer = CHMethods.getOfflinePlayer(args[0]);
+            if (offlinePlayer != null) {
+                return CloudyHomes.getHomesManager().getHomeNames(offlinePlayer);
+            }
+        }
+        return new ArrayList<>();
+    }
 }

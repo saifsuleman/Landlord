@@ -28,7 +28,7 @@ public class SetHomeCommand implements CommandExecutor {
         List<Home> homes = homesManager.getHomes(player);
 
         if (homes.size() >= allowed) {
-            CHMethods.send(player, "&2&LHOMES &7»&a You do not have enough homes to do that! Your home-limit is &7" + allowed + "&a!&6 You can purchase more homes at&n https://shop.cloudygaming.net/\"");
+            CHMethods.send(player, "&2&LHOMES &7»&a You do not have enough homes to do that! Your home-limit is &7" + allowed + "&a!&6 You can purchase more homes at &nhttps://shop.cloudygaming.net/\"");
             return true;
         }
 

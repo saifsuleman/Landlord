@@ -1,7 +1,6 @@
 name: CloudyHomes
 version: ${project.version}
 main: com.blakwurm.cloudyhomes.CloudyHomes
-api-version: 1.16
 authors: [Saif]
 website: blakwurm.com
 commands:

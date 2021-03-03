@@ -2,9 +2,8 @@ package com.blakwurm.cloudyhomes.handler;
 
 import com.blakwurm.cloudyhomes.CloudyHomes;
 import com.blakwurm.cloudyhomes.Home;
-import com.blakwurm.cloudyhomes.utils.CHMethods;
+import com.blakwurm.cloudyhomes.utils.LocaleManager;
 import net.md_5.bungee.api.chat.*;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -106,6 +105,10 @@ public class HomesManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<String> getHomeNames(OfflinePlayer player) {
+        return getHomes(player).stream().map(Home::getName).collect(Collectors.toList());
     }
 
     public Map<UUID, Integer> getAllowedHomesCount() {
@@ -269,18 +272,26 @@ public class HomesManager {
     }
 
     public BaseComponent[] getHomesListing(OfflinePlayer player, boolean admin) {
+        LocaleManager localeManager = CloudyHomes.getInstance().getLocaleManager();
+        String prefix = localeManager.getMessage(LocaleManager.Messages.PREFIX);
+
         ComponentBuilder builder = new ComponentBuilder();
-        builder.append(fromLegacyText(CHMethods.colour("&2&LHOMES &7»&a ")));
         List<Home> homes = getHomes(player);
+        if (homes.size() == 0) {
+            builder.append(fromLegacyText(admin ? prefix + player.getName() + localeManager.getMessage(LocaleManager.Messages.PLAYER_NO_HOMES)
+                    : prefix + localeManager.getMessage(LocaleManager.Messages.NO_HOMES)));
+            return builder.create();
+        }
+        builder.append(fromLegacyText(prefix));
         for (int i = 0; i < homes.size(); i++) {
             Home home = homes.get(i);
-            String text = ChatColor.GREEN + home.getName() + ChatColor.GRAY;
+            String text = localeManager.getMessage(LocaleManager.Messages.HOMELISTING).replaceAll("(?i)%HOME%", home.getName());
             if (i != homes.size() - 1) {
                 text += ", ";
             }
-            HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(CHMethods.colour("&aClick here to teleport to &7") + home.getName()).create());
+            HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(localeManager.getMessage(LocaleManager.Messages.CLICK_TO_TP) + home.getName()).create());
             ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, admin ? "/playerhome " + player.getName() + " " + home.getName() : "/cloudyhome " + home.getName());
-            builder.reset().event(hoverEvent).event(clickEvent).append(fromLegacyText(CHMethods.colour(text)));
+            builder.reset().event(hoverEvent).event(clickEvent).append(fromLegacyText(text));
         }
         return builder.create();
     }

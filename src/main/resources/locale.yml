@@ -1,0 +1,6 @@
+no-permission: "&cError: &4You do not have permission to do that!"
+prefix: "&2&LHOMES &7» "
+homelisting-item: "&a%HOME%&7"
+player-no-homes: "&a does not have any homes set!"
+no-homes: "&a You do not have any homes set!"
+click-to-tp: "&aClick here to teleport to &7"

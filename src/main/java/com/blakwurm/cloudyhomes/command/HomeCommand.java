@@ -6,14 +6,13 @@ import com.blakwurm.cloudyhomes.handler.HomesManager;
 import com.blakwurm.cloudyhomes.handler.PermissionHandler;
 import com.blakwurm.cloudyhomes.utils.CHMethods;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class HomeCommand implements CommandExecutor {
+public class HomeCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!PermissionHandler.hasPermission(sender, PermissionHandler.HOME_USER)) return true;
@@ -54,5 +53,14 @@ public class HomeCommand implements CommandExecutor {
 
         CHMethods.send(player, "&2&LHOMES &7»&a &7You do not have a home called &a" + name);
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length == 1 && sender instanceof Player) {
+            Player player = (Player) sender;
+            return CloudyHomes.getHomesManager().getHomeNames(player);
+        }
+        return new ArrayList<>();
     }
 }
