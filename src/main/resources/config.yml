@@ -1,0 +1,6 @@
+host: localhost
+database: cloudyhomes
+port: 3306
+username: cloudy
+password: cloudy
+defaultHomeCount: 3

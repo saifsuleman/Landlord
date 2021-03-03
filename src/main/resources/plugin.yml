@@ -1,0 +1,25 @@
+name: CloudyHomes
+version: ${project.version}
+main: com.blakwurm.cloudyhomes.CloudyHomes
+api-version: 1.16
+authors: [Saif]
+website: blakwurm.com
+commands:
+  listhomes:
+    aliases: [homes]
+  cloudyhome:
+    aliases: [home]
+  playerhome:
+    aliases: [playerhomes]
+  sethome:
+    description: Used to set your home
+  deletehome:
+    aliases: [delhome]
+  modifyhomecount:
+    aliases: [modhomes]
+    usage: /<command>
+permissions:
+  cloudyhomes.user:
+    default: true
+  cloudyhomes.admin:
+    default: op
