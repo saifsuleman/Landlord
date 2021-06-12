@@ -5,22 +5,26 @@ import com.blakwurm.cloudyhomes.Home;
 import com.blakwurm.cloudyhomes.handler.HomesManager;
 import com.blakwurm.cloudyhomes.handler.PermissionHandler;
 import com.blakwurm.cloudyhomes.utils.CHMethods;
+import com.blakwurm.cloudyhomes.utils.LocaleManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class SetHomeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!PermissionHandler.hasPermission(sender, PermissionHandler.HOME_USER)) return true;
+        LocaleManager localeManager = CloudyHomes.getInstance().getLocaleManager();
         if (!(sender instanceof Player)) {
-            CHMethods.send(sender, "&2&LHOMES &7»&a You must be a player to do this!");
+            CHMethods.send(sender, localeManager.getMessage("must-be-player"));
             return true;
         }
+
+        String prefix = localeManager.getMessage("prefix");
+
         String name = args.length == 0 ? "home" : args[0];
         Player player = (Player) sender;
         HomesManager homesManager = CloudyHomes.getHomesManager();
@@ -28,22 +32,18 @@ public class SetHomeCommand implements CommandExecutor {
         List<Home> homes = homesManager.getHomes(player);
 
         if (homes.size() >= allowed) {
-            CHMethods.send(player, "&2&LHOMES &7»&a You do not have enough homes to do that! Your home-limit is &7" + allowed + "&a!&6 You can purchase more homes at &nhttps://shop.cloudygaming.net/\"");
+            CHMethods.send(player, prefix + localeManager.getMessage("not-enough-homes").replaceAll("(?i)%LIMIT%", String.valueOf(allowed)));
             return true;
         }
 
-        if (!isAlphanumeric(name)) {
-            CHMethods.send(player, "&2&LHOMES &7»&a Home names must be alphanumeric!");
+        if (!CHMethods.isAlphanumeric(name)) {
+            CHMethods.send(player, prefix + localeManager.getMessage("must-be-alphanumeric"));
             return true;
         }
 
         Home home = new Home(name, player, player.getLocation());
         homesManager.addHome(home);
-        CHMethods.send(player, "&2&LHOMES &7»&a You have set a home named '&7" + name + "&a'");
+        CHMethods.send(player, prefix + localeManager.getMessage("sethome").replaceAll("(?i)%HOME%", name));
         return true;
-    }
-
-    private boolean isAlphanumeric(String s) {
-        return Pattern.compile("^[a-zA-Z0-9]*$").matcher(s).find();
     }
 }

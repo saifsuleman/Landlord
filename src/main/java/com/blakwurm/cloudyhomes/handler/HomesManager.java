@@ -4,6 +4,7 @@ import com.blakwurm.cloudyhomes.CloudyHomes;
 import com.blakwurm.cloudyhomes.Home;
 import com.blakwurm.cloudyhomes.utils.LocaleManager;
 import net.md_5.bungee.api.chat.*;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -280,25 +281,25 @@ public class HomesManager {
 
     public BaseComponent[] getHomesListing(OfflinePlayer player, boolean admin) {
         LocaleManager localeManager = CloudyHomes.getInstance().getLocaleManager();
-        String prefix = localeManager.getMessage(LocaleManager.Messages.PREFIX);
-
+        String prefix = localeManager.getMessage("prefix");
         ComponentBuilder builder = new ComponentBuilder();
+        if (player == null || player.getName() == null) return builder.create();
         List<Home> homes = getHomes(player);
         if (homes.size() == 0) {
-            builder.append(fromLegacyText(admin ? prefix + player.getName() + localeManager.getMessage(LocaleManager.Messages.PLAYER_NO_HOMES)
-                    : prefix + localeManager.getMessage(LocaleManager.Messages.NO_HOMES)));
+            builder.append(fromLegacyText(admin ? prefix + localeManager.getMessage("player-no-homes").replaceAll("(?i)%PLAYER%", player.getName())
+                    : prefix + localeManager.getMessage("no-homes")));
             return builder.create();
         }
         builder.append(fromLegacyText(prefix));
         for (int i = 0; i < homes.size(); i++) {
             Home home = homes.get(i);
-            String text = localeManager.getMessage(LocaleManager.Messages.HOMELISTING).replaceAll("(?i)%HOME%", home.getName());
-            if (i != homes.size() - 1) {
-                text += ", ";
-            }
-            HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(localeManager.getMessage(LocaleManager.Messages.CLICK_TO_TP) + home.getName()).create());
+            String text = localeManager.getMessage("homelisting-item").replaceAll("(?i)%HOME%", home.getName());
+            HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(localeManager.getMessage("click-to-tp").replaceAll("(?i)%HOME%", home.getName())).create());
             ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, admin ? "/playerhome " + player.getName() + " " + home.getName() : "/cloudyhome " + home.getName());
-            builder.reset().event(hoverEvent).event(clickEvent).append(fromLegacyText(text));
+            builder.append(fromLegacyText(String.valueOf(ChatColor.RESET))).event(hoverEvent).event(clickEvent).append(fromLegacyText(text));
+            if (i != homes.size() - 1) {
+                builder.retain(ComponentBuilder.FormatRetention.FORMATTING).append(fromLegacyText(", "));
+            }
         }
         return builder.create();
     }

@@ -5,6 +5,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
+import java.util.regex.Pattern;
+
 public class CHMethods {
     public static String colour(String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
@@ -21,5 +23,9 @@ public class CHMethods {
             if (s.equalsIgnoreCase(name)) return player;
         }
         return null;
+    }
+
+    public static boolean isAlphanumeric(String s) {
+        return Pattern.compile("^[a-zA-Z0-9]*$").matcher(s).find();
     }
 }

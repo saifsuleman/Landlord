@@ -4,6 +4,7 @@ import com.blakwurm.cloudyhomes.CloudyHomes;
 import com.blakwurm.cloudyhomes.Home;
 import com.blakwurm.cloudyhomes.handler.PermissionHandler;
 import com.blakwurm.cloudyhomes.utils.CHMethods;
+import com.blakwurm.cloudyhomes.utils.LocaleManager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -19,18 +20,20 @@ public class PlayerHomeCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!PermissionHandler.hasPermission(sender, PermissionHandler.HOME_ADMIN)) return true;
+        LocaleManager localeManager = CloudyHomes.getInstance().getLocaleManager();
+        String prefix = localeManager.getMessage("prefix");
         if (!(sender instanceof Player)) {
-            CHMethods.send(sender, "&2&LHOMES &7»&a You must be a player to do this!");
+            CHMethods.send(sender, localeManager.getMessage("must-be-player"));
             return true;
         }
         if (args.length == 0) {
-            CHMethods.send(sender, "&2&LHOMES &7»&a Usage: /playerhome <player> <home>");
+            CHMethods.send(sender, prefix + localeManager.getMessage("playerhome-usage"));
             return true;
         }
         Player playerSender = (Player) sender;
         OfflinePlayer player = CHMethods.getOfflinePlayer(args[0]);
         if (player == null) {
-            CHMethods.send(sender, "&2&LHOMES &7»&a Unable to find the player '&7" + args[0] + "&a'");
+            CHMethods.send(sender, prefix + localeManager.getMessage("cannot-find-player").replaceAll("(?i)%PLAYER%", args[0]));
             return true;
         }
         if (args.length == 1) {
@@ -43,11 +46,13 @@ public class PlayerHomeCommand implements CommandExecutor, TabCompleter {
         for (Home home : homes) {
             if (home.getName().equals(name)) {
                 playerSender.teleport(home.getLocation());
-                CHMethods.send(sender, "&2&LHOMES &7»&a You have teleported to &7" + player.getName() + "&a's home &7" + home.getName());
+                if (player.getName() != null)
+                    CHMethods.send(sender, prefix + localeManager.getMessage("you-have-teleported"
+                            .replaceAll("(?i)%PLAYER%", player.getName()).replaceAll("(?i)%HOME%", home.getName())));
                 return true;
             }
         }
-        CHMethods.send(sender, "&2&LHOMES &7»&a &7That player does not have a home called &a" + name);
+        CHMethods.send(sender, prefix + localeManager.getMessage("playerhome-no-home-called").replaceAll("(?i)%HOME%", name));
         return true;
     }
 

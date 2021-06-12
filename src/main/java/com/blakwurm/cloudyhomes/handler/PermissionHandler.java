@@ -14,7 +14,7 @@ public class PermissionHandler {
 
         boolean permitted = sender.hasPermission(perm);
         if (!permitted) {
-            CHMethods.send(sender, localeManager.getMessage(LocaleManager.Messages.NO_PERMISSION));
+            CHMethods.send(sender, localeManager.getMessage("no-permission"));
         }
         return permitted;
     }

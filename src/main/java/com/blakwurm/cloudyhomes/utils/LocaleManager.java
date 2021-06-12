@@ -11,18 +11,19 @@ public class LocaleManager {
         this.config = new Config("locale.yml");
     }
 
-    public String getMessage(Messages messages) {
-        if (!config.getConfig().contains(messages.value())) {
-            CloudyHomes.getInstance().getLogger().severe("ILLEGAL LOCALE FETCH: " + messages.value());
-            return ChatColor.RED + "There was a locale error. Message: " + messages.value();
+    public String getMessage(String s) {
+        if (!config.getConfig().contains(s)) {
+            CloudyHomes.getInstance().getLogger().severe("ILLEGAL LOCALE FETCH: " + s);
+            return ChatColor.RED + "There was a locale error. Message: " + s;
         }
 
-        return CHMethods.colour(config.getConfig().getString(messages.value()));
+        return CHMethods.colour(config.getConfig().getString(s));
     }
 
     public enum Messages {
         NO_PERMISSION("no-permission"), PREFIX("prefix"), PLAYER_NO_HOMES("player-no-homes"),
-        NO_HOMES("no-homes"), HOMELISTING("homelisting-item"), CLICK_TO_TP("click-to-tp");
+        NO_HOMES("no-homes"), HOMELISTING("homelisting-item"), CLICK_TO_TP("click-to-tp"),
+        NOT_ENOUGH_HOMES("not-enough-homes"), MUST_BE_ALPHANUMERIC("must-be-alphanumeric");
         private String value;
 
         Messages(String value) {

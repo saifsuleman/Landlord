@@ -34,12 +34,16 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             if (homes.size() == 1) {
                 name = homes.get(0).getName();
             } else {
-                // TODO: replace with an interactive home listing
                 BaseComponent[] homesListing = homesManager.getHomesListing(player, false);
                 player.spigot().sendMessage(homesListing);
                 return true;
             }
         } else {
+            if (!CHMethods.isAlphanumeric(args[0])) {
+                // TODO: Locale file
+                CHMethods.send(sender, "home name must be alphasnumeric");
+                return true;
+            }
             name = args[0];
         }
 
