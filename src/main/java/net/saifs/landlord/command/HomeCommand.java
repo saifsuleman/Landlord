@@ -1,6 +1,7 @@
 package net.saifs.landlord.command;
 
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.saifs.landlord.Home;
 import net.saifs.landlord.Landlord;
 import net.saifs.landlord.handler.HomesManager;
@@ -40,13 +41,12 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             if (homes.size() == 1) {
                 name = homes.get(0).getName();
             } else {
-                BaseComponent[] homesListing = homesManager.getHomesListing(player, false);
+                TextComponent homesListing = homesManager.getHomesListing(player, false);
                 player.spigot().sendMessage(homesListing);
                 return true;
             }
         } else {
             if (!CHMethods.isAlphanumeric(args[0])) {
-                // TODO: Locale file
                 CHMethods.send(sender, prefix + localeManager.getMessage("must-be-alphanumeric"));
                 return true;
             }

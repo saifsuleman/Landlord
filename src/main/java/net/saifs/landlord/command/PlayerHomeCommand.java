@@ -1,5 +1,6 @@
 package net.saifs.landlord.command;
 
+import net.md_5.bungee.api.chat.TextComponent;
 import net.saifs.landlord.Landlord;
 import net.saifs.landlord.Home;
 import net.saifs.landlord.handler.PermissionHandler;
@@ -37,7 +38,7 @@ public class PlayerHomeCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         if (args.length == 1) {
-            BaseComponent[] homesListing = Landlord.getHomesManager().getHomesListing(player, true);
+            TextComponent homesListing = Landlord.getHomesManager().getHomesListing(player, true);
             playerSender.spigot().sendMessage(homesListing);
             return true;
         }

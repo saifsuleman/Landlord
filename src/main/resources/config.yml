@@ -1,8 +1,8 @@
 mysql:
   enabled: false
   host: localhost
-  database: cloudyhomes
+  database: mydb
   port: 3306
-  username: cloudy
-  password: cloudy
+  username: mysqluser
+  password: mysqlpass
 defaultHomeCount: 3
