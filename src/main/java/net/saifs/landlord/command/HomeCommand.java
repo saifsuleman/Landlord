@@ -1,10 +1,10 @@
-package com.blakwurm.cloudyhomes.command;
+package net.saifs.landlord.command;
 
-import com.blakwurm.cloudyhomes.CloudyHomes;
-import com.blakwurm.cloudyhomes.Home;
-import com.blakwurm.cloudyhomes.handler.HomesManager;
-import com.blakwurm.cloudyhomes.handler.PermissionHandler;
-import com.blakwurm.cloudyhomes.utils.CHMethods;
+import net.saifs.landlord.Landlord;
+import net.saifs.landlord.Home;
+import net.saifs.landlord.handler.HomesManager;
+import net.saifs.landlord.handler.PermissionHandler;
+import net.saifs.landlord.utils.CHMethods;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -22,7 +22,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         }
         Player player = (Player) sender;
         String name;
-        HomesManager homesManager = CloudyHomes.getHomesManager();
+        HomesManager homesManager = Landlord.getHomesManager();
         List<Home> homes = homesManager.getHomes(player);
 
         if (homes.size() == 0) {
@@ -63,7 +63,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1 && sender instanceof Player) {
             Player player = (Player) sender;
-            return CloudyHomes.getHomesManager().getHomeNames(player);
+            return Landlord.getHomesManager().getHomeNames(player);
         }
         return new ArrayList<>();
     }

@@ -1,8 +1,8 @@
-package com.blakwurm.cloudyhomes.handler;
+package net.saifs.landlord.handler;
 
-import com.blakwurm.cloudyhomes.CloudyHomes;
-import com.blakwurm.cloudyhomes.Home;
-import com.blakwurm.cloudyhomes.utils.LocaleManager;
+import net.saifs.landlord.Landlord;
+import net.saifs.landlord.Home;
+import net.saifs.landlord.utils.LocaleManager;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -33,7 +33,7 @@ public class HomesManager {
         List<Home> homes = new ArrayList<>();
 
         try {
-            boolean mysql = CloudyHomes.getInstance().getPluginConfig().getConfig().getBoolean("mysql.enabled");
+            boolean mysql = Landlord.getInstance().getPluginConfig().getConfig().getBoolean("mysql.enabled");
             if (mysql) {
                 String query = "CREATE TABLE IF NOT EXISTS homes (id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY, homename VARCHAR(255) NOT NULL, owner VARCHAR(255) NOT NULL, x FLOAT(25) NOT NULL, y "
                         + "FLOAT(25) NOT NULL, z FLOAT(25) NOT NULL, yaw FLOAT(10) NOT NULL, pitch FLOAT(10) NOT NULL, world VARCHAR(255) NOT NULL)";
@@ -52,7 +52,7 @@ public class HomesManager {
             ResultSet results = this.sql.prepareStatement(query).executeQuery();
 
             while (results.next()) {
-                OfflinePlayer owner = CloudyHomes.getInstance().getServer().getOfflinePlayer(UUID.fromString(results.getString("owner")));
+                OfflinePlayer owner = Landlord.getInstance().getServer().getOfflinePlayer(UUID.fromString(results.getString("owner")));
                 String name = results.getString("homename");
                 double x = results.getDouble("x");
                 double y = results.getDouble("y");
@@ -60,7 +60,7 @@ public class HomesManager {
                 float yaw = results.getFloat("yaw");
                 float pitch = results.getFloat("pitch");
 
-                World world = CloudyHomes.getInstance().getServer().getWorld(results.getString("world"));
+                World world = Landlord.getInstance().getServer().getWorld(results.getString("world"));
                 if (world == null) continue;
 
                 Location loc = new Location(world, x, y, z, yaw, pitch);
@@ -164,7 +164,7 @@ public class HomesManager {
     public int getAllowedHomesCount(OfflinePlayer player) {
         Map<UUID, Integer> map = getAllowedHomesCount();
         if (map.containsKey(player.getUniqueId())) return map.get(player.getUniqueId());
-        int defaultHomeCount = CloudyHomes.getInstance().getPluginConfig().getConfig().getInt("defaultHomeCount");
+        int defaultHomeCount = Landlord.getInstance().getPluginConfig().getConfig().getInt("defaultHomeCount");
         setAllowedHomesCount(player.getUniqueId(), defaultHomeCount);
         return defaultHomeCount;
     }
@@ -280,7 +280,7 @@ public class HomesManager {
     }
 
     public BaseComponent[] getHomesListing(OfflinePlayer player, boolean admin) {
-        LocaleManager localeManager = CloudyHomes.getInstance().getLocaleManager();
+        LocaleManager localeManager = Landlord.getInstance().getLocaleManager();
         String prefix = localeManager.getMessage("prefix");
         ComponentBuilder builder = new ComponentBuilder();
         if (player == null || player.getName() == null) return builder.create();

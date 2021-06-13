@@ -1,8 +1,7 @@
-name: CloudyHomes
+name: Landlord
 version: ${project.version}
-main: com.blakwurm.cloudyhomes.CloudyHomes
+main: net.saifs.landlord.Landlord
 authors: [Saif]
-website: blakwurm.com
 commands:
   listhomes:
     aliases: [homes]
@@ -18,7 +17,7 @@ commands:
     aliases: [modhomes]
     usage: /<command>
 permissions:
-  cloudyhomes.user:
+  landlord.user:
     default: true
-  cloudyhomes.admin:
+  landlord.admin:
     default: op

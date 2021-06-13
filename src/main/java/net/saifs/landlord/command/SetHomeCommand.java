@@ -1,11 +1,11 @@
-package com.blakwurm.cloudyhomes.command;
+package net.saifs.landlord.command;
 
-import com.blakwurm.cloudyhomes.CloudyHomes;
-import com.blakwurm.cloudyhomes.Home;
-import com.blakwurm.cloudyhomes.handler.HomesManager;
-import com.blakwurm.cloudyhomes.handler.PermissionHandler;
-import com.blakwurm.cloudyhomes.utils.CHMethods;
-import com.blakwurm.cloudyhomes.utils.LocaleManager;
+import net.saifs.landlord.Landlord;
+import net.saifs.landlord.Home;
+import net.saifs.landlord.handler.HomesManager;
+import net.saifs.landlord.handler.PermissionHandler;
+import net.saifs.landlord.utils.CHMethods;
+import net.saifs.landlord.utils.LocaleManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,7 @@ public class SetHomeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!PermissionHandler.hasPermission(sender, PermissionHandler.HOME_USER)) return true;
-        LocaleManager localeManager = CloudyHomes.getInstance().getLocaleManager();
+        LocaleManager localeManager = Landlord.getInstance().getLocaleManager();
         if (!(sender instanceof Player)) {
             CHMethods.send(sender, localeManager.getMessage("must-be-player"));
             return true;
@@ -27,7 +27,7 @@ public class SetHomeCommand implements CommandExecutor {
 
         String name = args.length == 0 ? "home" : args[0];
         Player player = (Player) sender;
-        HomesManager homesManager = CloudyHomes.getHomesManager();
+        HomesManager homesManager = Landlord.getHomesManager();
         int allowed = homesManager.getAllowedHomesCount(player);
         List<Home> homes = homesManager.getHomes(player);
 

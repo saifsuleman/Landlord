@@ -1,6 +1,6 @@
-package com.blakwurm.cloudyhomes.config;
+package net.saifs.landlord.config;
 
-import com.blakwurm.cloudyhomes.CloudyHomes;
+import net.saifs.landlord.Landlord;
 import com.google.common.base.Charsets;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class Config {
-    final CloudyHomes PLUGIN = CloudyHomes.getInstance();
+    final Landlord PLUGIN = Landlord.getInstance();
 
     private String name;
     private File file;

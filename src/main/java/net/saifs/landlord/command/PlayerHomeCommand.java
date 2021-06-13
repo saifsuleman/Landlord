@@ -1,10 +1,10 @@
-package com.blakwurm.cloudyhomes.command;
+package net.saifs.landlord.command;
 
-import com.blakwurm.cloudyhomes.CloudyHomes;
-import com.blakwurm.cloudyhomes.Home;
-import com.blakwurm.cloudyhomes.handler.PermissionHandler;
-import com.blakwurm.cloudyhomes.utils.CHMethods;
-import com.blakwurm.cloudyhomes.utils.LocaleManager;
+import net.saifs.landlord.Landlord;
+import net.saifs.landlord.Home;
+import net.saifs.landlord.handler.PermissionHandler;
+import net.saifs.landlord.utils.CHMethods;
+import net.saifs.landlord.utils.LocaleManager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -20,7 +20,7 @@ public class PlayerHomeCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!PermissionHandler.hasPermission(sender, PermissionHandler.HOME_ADMIN)) return true;
-        LocaleManager localeManager = CloudyHomes.getInstance().getLocaleManager();
+        LocaleManager localeManager = Landlord.getInstance().getLocaleManager();
         String prefix = localeManager.getMessage("prefix");
         if (!(sender instanceof Player)) {
             CHMethods.send(sender, localeManager.getMessage("must-be-player"));
@@ -37,12 +37,12 @@ public class PlayerHomeCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         if (args.length == 1) {
-            BaseComponent[] homesListing = CloudyHomes.getHomesManager().getHomesListing(player, true);
+            BaseComponent[] homesListing = Landlord.getHomesManager().getHomesListing(player, true);
             playerSender.spigot().sendMessage(homesListing);
             return true;
         }
         String name = args[1];
-        List<Home> homes = CloudyHomes.getHomesManager().getHomes(player);
+        List<Home> homes = Landlord.getHomesManager().getHomes(player);
         for (Home home : homes) {
             if (home.getName().equals(name)) {
                 playerSender.teleport(home.getLocation());
@@ -65,7 +65,7 @@ public class PlayerHomeCommand implements CommandExecutor, TabCompleter {
         if (args.length == 2) {
             OfflinePlayer offlinePlayer = CHMethods.getOfflinePlayer(args[0]);
             if (offlinePlayer != null) {
-                return CloudyHomes.getHomesManager().getHomeNames(offlinePlayer);
+                return Landlord.getHomesManager().getHomeNames(offlinePlayer);
             }
         }
         return new ArrayList<>();

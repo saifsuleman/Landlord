@@ -1,6 +1,6 @@
-package com.blakwurm.cloudyhomes.sql;
+package net.saifs.landlord.sql;
 
-import com.blakwurm.cloudyhomes.CloudyHomes;
+import net.saifs.landlord.Landlord;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ public class SQLiteConnector implements IConnector {
     private File file;
 
     public SQLiteConnector(String filename) {
-        this.file = new File(CloudyHomes.getInstance().getDataFolder().getAbsolutePath() + File.separator + filename);
+        this.file = new File(Landlord.getInstance().getDataFolder().getAbsolutePath() + File.separator + filename);
         if (!this.file.exists()) {
             try {
                 if (!this.file.getParentFile().exists()) {

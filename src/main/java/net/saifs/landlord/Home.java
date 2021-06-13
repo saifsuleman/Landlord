@@ -1,4 +1,4 @@
-package com.blakwurm.cloudyhomes;
+package net.saifs.landlord;
 
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;

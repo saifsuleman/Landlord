@@ -1,9 +1,9 @@
-package com.blakwurm.cloudyhomes.command;
+package net.saifs.landlord.command;
 
-import com.blakwurm.cloudyhomes.CloudyHomes;
-import com.blakwurm.cloudyhomes.Home;
-import com.blakwurm.cloudyhomes.handler.PermissionHandler;
-import com.blakwurm.cloudyhomes.utils.CHMethods;
+import net.saifs.landlord.Landlord;
+import net.saifs.landlord.Home;
+import net.saifs.landlord.handler.PermissionHandler;
+import net.saifs.landlord.utils.CHMethods;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,10 +26,10 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
             CHMethods.send(sender, "&2&LHOMES &7»&a Usage: /deletehome <home>");
             return true;
         }
-        List<Home> homes = CloudyHomes.getHomesManager().getHomes(player);
+        List<Home> homes = Landlord.getHomesManager().getHomes(player);
         for (Home home : homes) {
             if (home.getName().equalsIgnoreCase(args[0])) {
-                CloudyHomes.getHomesManager().removeHome(home);
+                Landlord.getHomesManager().removeHome(home);
                 CHMethods.send(sender, "&2&LHOMES &7»&a Deleted home: &7" + home.getName());
                 return true;
             }
@@ -42,7 +42,7 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1 && sender instanceof Player) {
             Player player = (Player) sender;
-            return CloudyHomes.getHomesManager().getHomeNames(player);
+            return Landlord.getHomesManager().getHomeNames(player);
         }
         return new ArrayList<>();
     }

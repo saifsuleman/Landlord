@@ -1,8 +1,8 @@
-package com.blakwurm.cloudyhomes.command;
+package net.saifs.landlord.command;
 
-import com.blakwurm.cloudyhomes.CloudyHomes;
-import com.blakwurm.cloudyhomes.handler.PermissionHandler;
-import com.blakwurm.cloudyhomes.utils.CHMethods;
+import net.saifs.landlord.Landlord;
+import net.saifs.landlord.handler.PermissionHandler;
+import net.saifs.landlord.utils.CHMethods;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,10 +25,10 @@ public class HomesCommand implements CommandExecutor {
                 CHMethods.send(sender, "&2&LHOMES &7»&a Unable to find that player!");
                 return true;
             }
-            player.spigot().sendMessage(CloudyHomes.getHomesManager().getHomesListing(offlinePlayer, true));
+            player.spigot().sendMessage(Landlord.getHomesManager().getHomesListing(offlinePlayer, true));
             return true;
         }
-        player.spigot().sendMessage(CloudyHomes.getHomesManager().getHomesListing(player, false));
+        player.spigot().sendMessage(Landlord.getHomesManager().getHomesListing(player, false));
         return true;
     }
 }

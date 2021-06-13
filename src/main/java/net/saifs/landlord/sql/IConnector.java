@@ -1,4 +1,4 @@
-package com.blakwurm.cloudyhomes.sql;
+package net.saifs.landlord.sql;
 
 import java.sql.Connection;
 import java.sql.SQLException;

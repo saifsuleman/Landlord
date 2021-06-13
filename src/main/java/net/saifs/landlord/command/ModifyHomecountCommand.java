@@ -1,9 +1,9 @@
-package com.blakwurm.cloudyhomes.command;
+package net.saifs.landlord.command;
 
-import com.blakwurm.cloudyhomes.CloudyHomes;
-import com.blakwurm.cloudyhomes.handler.HomesManager;
-import com.blakwurm.cloudyhomes.handler.PermissionHandler;
-import com.blakwurm.cloudyhomes.utils.CHMethods;
+import net.saifs.landlord.Landlord;
+import net.saifs.landlord.handler.HomesManager;
+import net.saifs.landlord.handler.PermissionHandler;
+import net.saifs.landlord.utils.CHMethods;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -29,7 +29,7 @@ public class ModifyHomecountCommand implements CommandExecutor {
             CHMethods.send(sender, "&2&LHOMES &7»&a Usage: /modifyhomecount <player> <amount>");
             return true;
         }
-        HomesManager homesManager = CloudyHomes.getHomesManager();
+        HomesManager homesManager = Landlord.getHomesManager();
         homesManager.setAllowedHomesCount(target.getUniqueId(), homesManager.getAllowedHomesCount(target) + amount);
         CHMethods.send(sender, "&2&LHOMES &7»&7 " + target.getName() + "&a now has &7" + homesManager.getAllowedHomesCount(target) + "&a allowed homes.");
         return true;

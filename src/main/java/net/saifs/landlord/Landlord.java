@@ -1,10 +1,10 @@
-package com.blakwurm.cloudyhomes;
+package net.saifs.landlord;
 
-import com.blakwurm.cloudyhomes.command.*;
-import com.blakwurm.cloudyhomes.config.Config;
-import com.blakwurm.cloudyhomes.handler.HomesManager;
-import com.blakwurm.cloudyhomes.sql.SQLConnector;
-import com.blakwurm.cloudyhomes.utils.LocaleManager;
+import net.saifs.landlord.config.Config;
+import net.saifs.landlord.handler.HomesManager;
+import net.saifs.landlord.sql.SQLConnector;
+import net.saifs.landlord.utils.LocaleManager;
+import net.saifs.landlord.command.*;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
@@ -22,14 +22,14 @@ import java.sql.SQLException;
  * ===============================================================================================
  * Player (UUID), X (double), Y (double), Z (double), World (String), Pitch (double), Yaw (double)
  */
-public final class CloudyHomes extends JavaPlugin {
-    private static CloudyHomes instance;
+public final class Landlord extends JavaPlugin {
+    private static Landlord instance;
     private Connection connection;
     private HomesManager homesManager;
     private Config config;
     private LocaleManager localeManager;
 
-    public static CloudyHomes getInstance() {
+    public static Landlord getInstance() {
         return instance;
     }
 

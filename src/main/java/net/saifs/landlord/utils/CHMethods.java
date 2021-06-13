@@ -1,4 +1,4 @@
-package com.blakwurm.cloudyhomes.utils;
+package net.saifs.landlord.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
