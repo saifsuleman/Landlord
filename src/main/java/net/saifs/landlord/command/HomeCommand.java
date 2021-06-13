@@ -1,12 +1,16 @@
 package net.saifs.landlord.command;
 
-import net.saifs.landlord.Landlord;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.saifs.landlord.Home;
+import net.saifs.landlord.Landlord;
 import net.saifs.landlord.handler.HomesManager;
 import net.saifs.landlord.handler.PermissionHandler;
 import net.saifs.landlord.utils.CHMethods;
-import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.command.*;
+import net.saifs.landlord.utils.LocaleManager;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -16,8 +20,10 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!PermissionHandler.hasPermission(sender, PermissionHandler.HOME_USER)) return true;
+        LocaleManager localeManager = Landlord.getInstance().getLocaleManager();
+        String prefix = localeManager.getMessage("prefix");
         if (!(sender instanceof Player)) {
-            CHMethods.send(sender, "&2&LHOMES &7»&a You must be a player to do this!");
+            CHMethods.send(sender, prefix + localeManager.getMessage("must-be-player"));
             return true;
         }
         Player player = (Player) sender;
@@ -26,7 +32,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         List<Home> homes = homesManager.getHomes(player);
 
         if (homes.size() == 0) {
-            CHMethods.send(sender, "&2&LHOMES &7»&a You do not have any homes set!");
+            CHMethods.send(sender, prefix + localeManager.getMessage("no-homes"));
             return true;
         }
 
@@ -41,21 +47,22 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         } else {
             if (!CHMethods.isAlphanumeric(args[0])) {
                 // TODO: Locale file
-                CHMethods.send(sender, "home name must be alphasnumeric");
+                CHMethods.send(sender, prefix + localeManager.getMessage("must-be-alphanumeric"));
                 return true;
             }
             name = args[0];
         }
 
         for (Home home : homes) {
-            if (home.getName().equals(name)) {
+            if (home.getName().equalsIgnoreCase(name)) {
                 player.teleport(home.getLocation());
-                CHMethods.send(player, "&2&LHOMES &7»&a You have teleported to &7" + home.getName());
+                CHMethods.send(player, prefix + localeManager.getMessage("you-have-teleported")
+                        .replaceAll("%HOME%", home.getName()));
                 return true;
             }
         }
 
-        CHMethods.send(player, "&2&LHOMES &7»&a &7You do not have a home called &a" + name);
+        CHMethods.send(player, prefix + localeManager.getMessage("no-home-exists").replaceAll("%HOME%", name));
         return true;
     }
 

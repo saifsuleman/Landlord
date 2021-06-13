@@ -23,7 +23,7 @@ public class PlayerHomeCommand implements CommandExecutor, TabCompleter {
         LocaleManager localeManager = Landlord.getInstance().getLocaleManager();
         String prefix = localeManager.getMessage("prefix");
         if (!(sender instanceof Player)) {
-            CHMethods.send(sender, localeManager.getMessage("must-be-player"));
+            CHMethods.send(sender, prefix+localeManager.getMessage("must-be-player"));
             return true;
         }
         if (args.length == 0) {
@@ -47,7 +47,7 @@ public class PlayerHomeCommand implements CommandExecutor, TabCompleter {
             if (home.getName().equals(name)) {
                 playerSender.teleport(home.getLocation());
                 if (player.getName() != null)
-                    CHMethods.send(sender, prefix + localeManager.getMessage("you-have-teleported"
+                    CHMethods.send(sender, prefix + localeManager.getMessage("you-have-teleported-other"
                             .replaceAll("(?i)%PLAYER%", player.getName()).replaceAll("(?i)%HOME%", home.getName())));
                 return true;
             }

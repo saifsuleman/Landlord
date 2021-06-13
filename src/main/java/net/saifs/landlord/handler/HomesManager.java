@@ -1,9 +1,9 @@
 package net.saifs.landlord.handler;
 
-import net.saifs.landlord.Landlord;
-import net.saifs.landlord.Home;
-import net.saifs.landlord.utils.LocaleManager;
 import net.md_5.bungee.api.chat.*;
+import net.saifs.landlord.Home;
+import net.saifs.landlord.Landlord;
+import net.saifs.landlord.utils.LocaleManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -31,18 +31,12 @@ public class HomesManager {
 
     public List<Home> getHomes() {
         List<Home> homes = new ArrayList<>();
-
         try {
-            boolean mysql = Landlord.getInstance().getPluginConfig().getConfig().getBoolean("mysql.enabled");
-            if (mysql) {
-                String query = "CREATE TABLE IF NOT EXISTS homes (id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY, homename VARCHAR(255) NOT NULL, owner VARCHAR(255) NOT NULL, x FLOAT(25) NOT NULL, y "
-                        + "FLOAT(25) NOT NULL, z FLOAT(25) NOT NULL, yaw FLOAT(10) NOT NULL, pitch FLOAT(10) NOT NULL, world VARCHAR(255) NOT NULL)";
-                this.sql.prepareStatement(query).executeUpdate();
-            } else {
-                String query = "CREATE TABLE IF NOT EXISTS homes (id INTEGER PRIMARY KEY AUTOINCREMENT, homename TEXT(255) NOT NULL, owner TEXT(255) NOT NULL, " +
-                        "x REAL(25) NOT NULL, y REAL(25) NOT NULL, z REAL(25) NOT NULL, yaw REAL(10) NOT NULL, pitch REAL(10) NOT NULL, world TEXT(255) NOT NULL)";
-                this.sql.prepareStatement(query).executeUpdate();
-            }
+            this.sql.prepareStatement(Landlord.getInstance().getPluginConfig().getConfig().getBoolean("mysql.enabled") ?
+                    "CREATE TABLE IF NOT EXISTS homes (id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY, homename VARCHAR(255) NOT NULL, owner VARCHAR(255) NOT NULL, x FLOAT(25) NOT NULL, y "
+                            + "FLOAT(25) NOT NULL, z FLOAT(25) NOT NULL, yaw FLOAT(10) NOT NULL, pitch FLOAT(10) NOT NULL, world VARCHAR(255) NOT NULL)" :
+                    "CREATE TABLE IF NOT EXISTS homes (id INTEGER PRIMARY KEY AUTOINCREMENT, homename TEXT(255) NOT NULL, owner TEXT(255) NOT NULL, " +
+                            "x REAL(25) NOT NULL, y REAL(25) NOT NULL, z REAL(25) NOT NULL, yaw REAL(10) NOT NULL, pitch REAL(10) NOT NULL, world TEXT(255) NOT NULL)").executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

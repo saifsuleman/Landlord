@@ -1,9 +1,10 @@
 package net.saifs.landlord.command;
 
-import net.saifs.landlord.Landlord;
 import net.saifs.landlord.Home;
+import net.saifs.landlord.Landlord;
 import net.saifs.landlord.handler.PermissionHandler;
 import net.saifs.landlord.utils.CHMethods;
+import net.saifs.landlord.utils.LocaleManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,8 +18,10 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!PermissionHandler.hasPermission(sender, PermissionHandler.HOME_USER)) return true;
+        LocaleManager localeManager = Landlord.getInstance().getLocaleManager();
+        String prefix = localeManager.getMessage("prefix");
         if (!(sender instanceof Player)) {
-            CHMethods.send(sender, "&2&LHOMES &7»&a You must be a player to do this!");
+            CHMethods.send(sender, prefix + localeManager.getMessage("must-be-player"));
             return true;
         }
         Player player = (Player) sender;
@@ -34,7 +37,7 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
         }
-        CHMethods.send(sender, "&2&LHOMES &7»&a You do not have a home named '&7" + args[0] + "&a'");
+        CHMethods.send(sender, prefix + localeManager.getMessage("no-home-exists").replaceAll("%HOME%", args[0]));
         return true;
     }
 
