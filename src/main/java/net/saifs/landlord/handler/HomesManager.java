@@ -296,8 +296,7 @@ public class HomesManager {
             ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, admin ? "/playerhome " + player.getName() + " " + home.getName() : "/cloudyhome " + home.getName());
             builder.append(fromLegacyText(String.valueOf(ChatColor.RESET))).event(hoverEvent).event(clickEvent).append(fromLegacyText(text));
             if (i != homes.size() - 1) {
-//                builder.retain(ComponentBuilder.FormatRetention.FORMATTING).append(fromLegacyText(", "));
-            builder.append(", ");
+                builder.append(fromLegacyText(ChatColor.GRAY + ", "));
             }
         }
         return builder.create();
