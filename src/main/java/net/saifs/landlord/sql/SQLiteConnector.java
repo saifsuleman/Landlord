@@ -10,6 +10,7 @@ import java.sql.SQLException;
 
 public class SQLiteConnector implements IConnector {
     private File file;
+    private Connection connection;
 
     public SQLiteConnector(String filename) {
         this.file = new File(Landlord.getInstance().getDataFolder().getAbsolutePath() + File.separator + filename);
@@ -23,11 +24,20 @@ public class SQLiteConnector implements IConnector {
                 e.printStackTrace();
             }
         }
+        try {
+            this.connection = this.openConnection();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public synchronized Connection openConnection() throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.jdbc.Driver");
+    public Connection getConnection() {
+        return this.connection;
+    }
+
+    public Connection openConnection() throws SQLException, ClassNotFoundException {
+        Class.forName("com.mysql.jdbc.xDriver");
         String url = "jdbc:sqlite:" + this.file.getAbsolutePath();
         return DriverManager.getConnection(url);
     }

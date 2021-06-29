@@ -15,8 +15,8 @@ public class SQLConnector implements IConnector {
     }
 
     @Override
-    public synchronized Connection openConnection() throws SQLException, ClassNotFoundException {
-        return this.connector.openConnection();
+    public Connection getConnection() throws SQLException {
+        return connector.getConnection();
     }
 }
 

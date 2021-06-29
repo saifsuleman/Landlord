@@ -3,13 +3,13 @@ package net.saifs.landlord.handler;
 import net.md_5.bungee.api.chat.*;
 import net.saifs.landlord.Home;
 import net.saifs.landlord.Landlord;
+import net.saifs.landlord.sql.SQLConnector;
 import net.saifs.landlord.utils.LocaleManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,9 +19,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class HomesManager {
-    private Connection sql;
+    private SQLConnector sql;
 
-    public HomesManager(Connection sql) {
+    public HomesManager(SQLConnector sql) {
         this.sql = sql;
     }
 
@@ -32,7 +32,7 @@ public class HomesManager {
     public List<Home> getHomes() {
         List<Home> homes = new ArrayList<>();
         try {
-            this.sql.prepareStatement(Landlord.getInstance().getPluginConfig().getConfig().getBoolean("mysql.enabled") ?
+            sql.getConnection().prepareStatement(Landlord.getInstance().getPluginConfig().getConfig().getBoolean("mysql.enabled") ?
                     "CREATE TABLE IF NOT EXISTS homes (id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY, homename VARCHAR(255) NOT NULL, owner VARCHAR(255) NOT NULL, x FLOAT(25) NOT NULL, y "
                             + "FLOAT(25) NOT NULL, z FLOAT(25) NOT NULL, yaw FLOAT(10) NOT NULL, pitch FLOAT(10) NOT NULL, world VARCHAR(255) NOT NULL)" :
                     "CREATE TABLE IF NOT EXISTS homes (id INTEGER PRIMARY KEY AUTOINCREMENT, homename TEXT(255) NOT NULL, owner TEXT(255) NOT NULL, " +
@@ -43,7 +43,7 @@ public class HomesManager {
 
         try {
             String query = "SELECT * FROM homes";
-            ResultSet results = this.sql.prepareStatement(query).executeQuery();
+            ResultSet results = sql.getConnection().prepareStatement(query).executeQuery();
 
             while (results.next()) {
                 OfflinePlayer owner = Landlord.getInstance().getServer().getOfflinePlayer(UUID.fromString(results.getString("owner")));
@@ -82,7 +82,7 @@ public class HomesManager {
         if (world == null) return;
         try {
             String query = "INSERT INTO homes (homename, owner, x, y, z, yaw, pitch, world) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement statement = this.sql.prepareStatement(query);
+            PreparedStatement statement = sql.getConnection().prepareStatement(query);
             statement.setString(1, home.getName());
             statement.setString(2, home.getOwner().getUniqueId().toString());
             statement.setDouble(3, x);
@@ -100,7 +100,7 @@ public class HomesManager {
     public void removeHome(Home home) {
         try {
             String query = "DELETE FROM homes WHERE homename=? AND owner=?";
-            PreparedStatement statement = this.sql.prepareStatement(query);
+            PreparedStatement statement = sql.getConnection().prepareStatement(query);
             statement.setString(1, home.getName());
             statement.setString(2, home.getOwner().getUniqueId().toString());
             statement.executeUpdate();
@@ -117,14 +117,14 @@ public class HomesManager {
         Map<UUID, Integer> map = new HashMap<>();
         try {
             String query = "CREATE TABLE IF NOT EXISTS homeplayers (uuid VARCHAR(255) PRIMARY KEY, allowedhomecount INT(10) NOT NULL)";
-            this.sql.prepareStatement(query).executeUpdate();
+            sql.getConnection().prepareStatement(query).executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         try {
             String query = "SELECT * FROM homeplayers";
-            ResultSet results = this.sql.prepareStatement(query).executeQuery();
+            ResultSet results = sql.getConnection().prepareStatement(query).executeQuery();
 
             while (results.next()) {
                 UUID uuid = UUID.fromString(results.getString("uuid"));
@@ -140,13 +140,13 @@ public class HomesManager {
     public void setAllowedHomesCount(UUID uuid, int count) {
         try {
             String hasQuery = "SELECT * FROM homeplayers WHERE uuid=?";
-            PreparedStatement hasStatement = this.sql.prepareStatement(hasQuery);
+            PreparedStatement hasStatement = sql.getConnection().prepareStatement(hasQuery);
             hasStatement.setString(1, uuid.toString());
             ResultSet hasResults = hasStatement.executeQuery();
             boolean has = hasResults.next();
 
             String query = has ? "UPDATE homeplayers SET allowedhomecount=? WHERE uuid=?" : "INSERT INTO homeplayers (allowedhomecount, uuid) VALUES (?, ?)";
-            PreparedStatement statement = sql.prepareStatement(query);
+            PreparedStatement statement = sql.getConnection().prepareStatement(query);
             statement.setInt(1, count);
             statement.setString(2, uuid.toString());
             statement.executeUpdate();
