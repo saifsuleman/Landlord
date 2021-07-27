@@ -1,25 +1,43 @@
 package net.saifs.landlord.sql;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 public class MySQLConnector implements IConnector {
-    private final String host, db, user, password;
-    private final int port;
+    private final HikariDataSource hikari;
 
-    public MySQLConnector(String host, int port, String db, String user, String password) {
-        this.host = host;
-        this.db = db;
-        this.user = user;
-        this.password = password;
-        this.port = port;
+    public MySQLConnector(String ip, int port, String username, String password, String database) {
+        this("jdbc:mysql://" + ip + ":" + port + "/" + database, username, password);
     }
 
-    public synchronized Connection openConnection() throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.jdbc.Driver");
-        String url = String.format("jdbc:mysql://%s:%d/%s?autoReconnect=true",
-                this.host, this.port, this.db);
-        return DriverManager.getConnection(url, this.user, this.password);
+    public MySQLConnector(String jdbcUrl, String username, String password) {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(jdbcUrl);
+        config.addDataSourceProperty("user", username);
+        config.addDataSourceProperty("password", password);
+        config.addDataSourceProperty("cachePrepStmts", true);
+        config.addDataSourceProperty("prepStmtCacheSize", 250);
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+        config.addDataSourceProperty("useServerPrepStmts", true);
+        config.addDataSourceProperty("cacheCallableStmts", true);
+        config.addDataSourceProperty("alwaysSendSetIsolation", false);
+        config.addDataSourceProperty("cacheServerConfiguration", true);
+        config.addDataSourceProperty("elideSetAutoCommits", true);
+        config.addDataSourceProperty("useLocalSessionState", true);
+        config.addDataSourceProperty("characterEncoding", "utf8");
+        config.addDataSourceProperty("useUnicode", "true");
+        config.addDataSourceProperty("maxLifetime", TimeUnit.MINUTES.toMillis(10));
+        config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(15));
+        config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(10));
+        this.hikari = new HikariDataSource(config);
+    }
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        return this.hikari.getConnection();
     }
 }

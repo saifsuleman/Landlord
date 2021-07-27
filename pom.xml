@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.blakwurm</groupId>
-    <artifactId>CloudyHomes</artifactId>
+    <groupId>net.saifs</groupId>
+    <artifactId>Landlord</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>CloudyHomes</name>
+    <name>Landlord</name>
 
     <properties>
         <java.version>1.8</java.version>
@@ -53,4 +53,17 @@
         </resources>
     </build>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.7.10-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
+        </dependency>
+    </dependencies>
 </project>

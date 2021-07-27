@@ -1,17 +1,14 @@
 package net.saifs.landlord;
 
+import net.saifs.landlord.command.*;
 import net.saifs.landlord.config.Config;
 import net.saifs.landlord.handler.HomesManager;
 import net.saifs.landlord.sql.SQLConnector;
 import net.saifs.landlord.utils.LocaleManager;
-import net.saifs.landlord.command.*;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * PLAYERS DATABASE
@@ -24,7 +21,7 @@ import java.sql.SQLException;
  */
 public final class Landlord extends JavaPlugin {
     private static Landlord instance;
-    private Connection connection;
+    private SQLConnector connector;
     private HomesManager homesManager;
     private Config config;
     private LocaleManager localeManager;
@@ -35,10 +32,6 @@ public final class Landlord extends JavaPlugin {
 
     public static HomesManager getHomesManager() {
         return getInstance().homesManager;
-    }
-
-    public Connection getConnection() {
-        return this.connection;
     }
 
     public LocaleManager getLocaleManager() {
@@ -54,7 +47,7 @@ public final class Landlord extends JavaPlugin {
         if (!this.initializeSQL()) {
             return;
         }
-        this.homesManager = new HomesManager(getConnection());
+        this.homesManager = new HomesManager(connector);
         this.localeManager = new LocaleManager();
 
         registerCommand("home", new HomeCommand());
@@ -68,14 +61,8 @@ public final class Landlord extends JavaPlugin {
     private boolean initializeSQL() {
         boolean mysql = config.getConfig().getBoolean("mysql.enabled");
 
-        SQLConnector connector = mysql ? new SQLConnector(config.getConfig().getString("mysql.host"), config.getConfig().getInt("mysql.port"),
+        this.connector = mysql ? new SQLConnector(config.getConfig().getString("mysql.host"), config.getConfig().getInt("mysql.port"),
                 config.getConfig().getString("mysql.database"), config.getConfig().getString("mysql.username"), config.getConfig().getString("mysql.password")) : new SQLConnector("homes.db");
-        try {
-            this.connection = connector.openConnection();
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
         return true;
     }
 

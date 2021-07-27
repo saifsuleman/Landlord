@@ -38,6 +38,7 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
             }
         }
         CHMethods.send(sender, prefix + localeManager.getMessage("no-home-exists").replaceAll("%HOME%", args[0]));
+
         return true;
     }
 
