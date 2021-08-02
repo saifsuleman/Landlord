@@ -3,7 +3,8 @@ package net.saifs.landlord;
 import net.saifs.landlord.command.*;
 import net.saifs.landlord.config.Config;
 import net.saifs.landlord.handler.HomesManager;
-import net.saifs.landlord.sql.SQLConnector;
+import net.saifs.landlord.sql.IConnector;
+import net.saifs.landlord.sql.SQLiteConnector;
 import net.saifs.landlord.utils.LocaleManager;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -21,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class Landlord extends JavaPlugin {
     private static Landlord instance;
-    private SQLConnector connector;
+    private IConnector connector;
     private HomesManager homesManager;
     private Config config;
     private LocaleManager localeManager;
@@ -59,10 +60,7 @@ public final class Landlord extends JavaPlugin {
     }
 
     private boolean initializeSQL() {
-        boolean mysql = config.getConfig().getBoolean("mysql.enabled");
-
-        this.connector = mysql ? new SQLConnector(config.getConfig().getString("mysql.host"), config.getConfig().getInt("mysql.port"),
-                config.getConfig().getString("mysql.database"), config.getConfig().getString("mysql.username"), config.getConfig().getString("mysql.password")) : new SQLConnector("homes.db");
+        this.connector = new SQLiteConnector("homes.db");
         return true;
     }
 

@@ -1,8 +1,1 @@
-mysql:
-  enabled: false
-  host: localhost
-  database: mydb
-  port: 3306
-  username: mysqluser
-  password: mysqlpass
 defaultHomeCount: 3

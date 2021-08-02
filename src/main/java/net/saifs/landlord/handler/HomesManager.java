@@ -7,7 +7,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.saifs.landlord.Home;
 import net.saifs.landlord.Landlord;
-import net.saifs.landlord.sql.SQLConnector;
+import net.saifs.landlord.sql.IConnector;
 import net.saifs.landlord.utils.LocaleManager;
 import net.saifs.landlord.utils.concurrency.Promise;
 import net.saifs.landlord.utils.concurrency.ThreadUtil;
@@ -23,13 +23,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class HomesManager {
-    private SQLConnector connector;
+    private final IConnector connector;
     private List<Home> homes;
     private Map<UUID, Integer> allowedHomes;
 
-    public HomesManager(SQLConnector connector) {
+    public HomesManager(IConnector connector) {
         this.connector = connector;
         createTables();
+
+        this.homes = new ArrayList<>();
+        this.allowedHomes = new HashMap<>();
+
         loadHomes().then(homes -> this.homes = homes);
         loadAllowedHomes().then(allowedHomes -> this.allowedHomes = allowedHomes);
     }
@@ -39,25 +43,23 @@ public class HomesManager {
     }
 
     private void createTables() {
-        ThreadUtil.async(() -> {
-            try (Connection connection = connector.getConnection()) {
-                String query = Landlord.getInstance().getPluginConfig().getConfig().getBoolean("mysql.enabled") ?
-                        "CREATE TABLE IF NOT EXISTS homes (homename VARCHAR(255) NOT NULL PRIMARY KEY, owner VARCHAR(255) NOT NULL, x FLOAT(25) NOT NULL, y "
-                                + "FLOAT(25) NOT NULL, z FLOAT(25) NOT NULL, yaw FLOAT(10) NOT NULL, pitch FLOAT(10) NOT NULL, world VARCHAR(255) NOT NULL)" :
-                        "CREATE TABLE IF NOT EXISTS homes (homename TEXT(255) NOT NULL PRIMARY KEY, owner TEXT(255) NOT NULL, " +
-                                "x REAL(25) NOT NULL, y REAL(25) NOT NULL, z REAL(25) NOT NULL, yaw REAL(10) NOT NULL, pitch REAL(10) NOT NULL, world TEXT(255) NOT NULL)";
-                connection.prepareStatement(query).executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        try (Connection connection = connector.getConnection()) {
+            String query = "CREATE TABLE IF NOT EXISTS homes (homename TEXT(255) NOT NULL, owner TEXT(255) NOT NULL," +
+                    "x REAL(25) NOT NULL, y REAL(25) NOT NULL, z REAL(25) NOT NULL, yaw REAL(10) NOT NULL, pitch REAL(10) NOT NULL, world TEXT(255) NOT NULL, " +
+                    "PRIMARY KEY (homename, owner))";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-            try (Connection connection = connector.getConnection()) {
-                String query = "CREATE TABLE IF NOT EXISTS homeplayers (uuid VARCHAR(255) PRIMARY KEY, allowedhomecount INT(10) NOT NULL)";
-                connection.prepareStatement(query).executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+        try (Connection connection = connector.getConnection()) {
+            String query = "CREATE TABLE IF NOT EXISTS homeplayers (uuid VARCHAR(255) PRIMARY KEY, allowedhomecount INT(10) NOT NULL)";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public Promise<List<Home>> loadHomes() {
@@ -106,9 +108,10 @@ public class HomesManager {
             World world = home.getLocation().getWorld();
             if (world == null) return;
             try (Connection connection = connector.getConnection()) {
-                String query = "INSERT INTO homes (homename, owner, x, y, z, yaw, pitch, world) VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
-                        "ON DUPLICATE KEY UPDATE owner = VALUES(owner), x = VALUES(x), y = VALUES(y), " +
-                        "z = VALUES(z), yaw = VALUES(yaw), pitch = VALUES(pitch), world = VALUES(world)";
+//                String query = "INSERT INTO homes (homename, owner, x, y, z, yaw, pitch, world) VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
+//                        "ON DUPLICATE KEY UPDATE  x = VALUES(x), y = VALUES(y), " +
+//                        "z = VALUES(z), yaw = VALUES(yaw), pitch = VALUES(pitch), world = VALUES(world)";
+                String query = "INSERT OR REPLACE INTO homes (homename, owner, x, y, z, yaw, pitch, world) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setString(1, home.getName());
                 statement.setString(2, home.getOwner().getUniqueId().toString());
@@ -170,8 +173,11 @@ public class HomesManager {
 
         ThreadUtil.async(() -> {
             try (Connection connection = connector.getConnection()) {
-                String query = "INSERT INTO homeplayers SET allowedhomecount = ? WHERE uuid = ? ON DUPLICATE KEY UPDATE allowedhomecount = VALUES(allowedhomecount)";
-                connection.prepareStatement(query).executeUpdate();
+//                String query = "INSERT INTO homeplayers (uuid, allowedhomecount) VALUES (?, ?) ON DUPLICATE KEY UPDATE allowedhomecount = VALUES(allowedhomecount)";
+                String query = "INSERT OR REPLACE INTO homeplayers (uuid, allowedhomecount) VALUES (?, ?)";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, uuid.toString());
+                statement.setInt(2, count);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -179,19 +185,22 @@ public class HomesManager {
     }
 
     public int getAllowedHomesCount(OfflinePlayer player) {
+        if (!allowedHomes.containsKey(player.getUniqueId())) {
+            return Landlord.getInstance().getPluginConfig().getConfig().getInt("defaultHomeCount");
+        }
         return allowedHomes.get(player.getUniqueId());
     }
 
     public TextComponent getHomesListing(OfflinePlayer player, boolean admin) {
         LocaleManager localeManager = Landlord.getInstance().getLocaleManager();
         String prefix = localeManager.getMessage("prefix").trim();
-        TextComponent textComponent = new TextComponent("");
+        TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText(prefix));
         if (player == null || player.getName() == null) return textComponent;
-        textComponent.addExtra(prefix);
         List<Home> homes = getHomes(player);
         if (homes.size() == 0) {
-            textComponent.addExtra(admin ? prefix + localeManager.getMessage("player-no-homes").replaceAll("(?i)%PLAYER%", player.getName())
-                    : prefix + localeManager.getMessage("no-homes"));
+            String s = admin ? localeManager.getMessage("player-no-homes").replaceAll("(?i)%PLAYER%", player.getName())
+                    : localeManager.getMessage("no-homes");
+            textComponent.addExtra(s);
             return textComponent;
         }
         for (int i = 0; i < homes.size(); i++) {
