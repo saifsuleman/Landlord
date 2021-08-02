@@ -39,7 +39,7 @@ public class HomesManager {
     }
 
     public List<Home> getHomes(OfflinePlayer player) {
-        return homes.stream().filter(home -> home.getOwner().equals(player)).collect(Collectors.toList());
+        return homes.stream().filter(home -> home.isOwner(player)).collect(Collectors.toList());
     }
 
     private void createTables() {

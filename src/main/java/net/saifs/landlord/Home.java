@@ -4,9 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 public class Home {
-    private String name;
-    private OfflinePlayer owner;
-    private Location location;
+    private final String name;
+    private final OfflinePlayer owner;
+    private final Location location;
 
     public Home(String name, OfflinePlayer owner, Location location) {
         this.name = name;
@@ -24,5 +24,9 @@ public class Home {
 
     public Location getLocation() {
         return location;
+    }
+
+    public boolean isOwner(OfflinePlayer player) {
+        return owner.getUniqueId().equals(player.getUniqueId());
     }
 }
